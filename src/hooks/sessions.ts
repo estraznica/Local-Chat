@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 
 export interface IMessage {
   id: number;
-  value: string | IMessageImg;
+  value: string | IMessageObj;
   userName: string;
 }
-interface IMessageImg {
-  src: string;
+interface IMessageObj {
+  src?: string;
+  value: string;
+  replyValue: string;
 }
 export function useSessions() {
   //получаю пользователя и комнату из sessionStorage
@@ -41,21 +43,48 @@ export function useSessions() {
       }
     }
   };
+  //если загрузили слишком большое изображение
+  const handleTooBigImage = () => {
+    setTooBigImage((prev) => !prev);
+  };
   //добавление эмоджи в текст
   const [showed, setShowed] = React.useState(false);
   const showEmoji = function () {
     setShowed((prev) => !prev);
   };
-
   let emojies = ['😀', '😆', '😅', '🤣', '🙂', '🙃', '🥰'];
   const handleEmojiClick = function (i: number) {
     setValueMessage(valueMessage + emojies[i]);
   };
-  //если загрузили слишком большое изображение
-  const handleTooBigImage = () => {
-    setTooBigImage((prev) => !prev);
+  //цитирование
+  const [messageReply, setMessageReply] = React.useState('');
+  const [messageReplyValue, setMessageReplyValue] = React.useState('');
+  const [showMessageReply, setShowMessageReply] = React.useState({});
+  const [messageReplyId, setMessageReplyId] = React.useState(0);
+  const handleMessageClick = function (id: number) {
+    setShowMessageReply((prev) => !prev);
+    setMessageReplyId(id);
   };
-
+  const handleMessageReply = function (value: string) {
+    let message = JSON.parse(value);
+    //простая цитата
+    if (typeof message == 'string') {
+      setMessageReply(value);
+      setMessageReplyValue(value.slice(0, 100));
+    } else if ('src' in message) {
+      //цитирование изображения
+      setMessageReply('Изображение');
+      setMessageReplyValue('Изображение');
+    } else {
+      //цитирование цитаты
+      setMessageReply(message.value);
+      setMessageReplyValue(message.value.slice(0, 100));
+    }
+  };
+  const handleCloseMessageReply = () => {
+    setMessageReply('');
+    setMessageReplyValue('');
+  };
   //отправка сообщения
   const handleSubmit = (event: React.FormEvent<HTMLButtonElement>) => {
     //если добавили изображение
@@ -73,13 +102,26 @@ export function useSessions() {
     if (valueMessage.trim().length === 0) {
       event.preventDefault();
     } else {
-      //сохраняем сообщение в localStorage при отправке
-      const newMessage = { id: Date.now() + 1, userName: savedUserName, value: valueMessage };
-      saveMessages.push(newMessage);
-      localStorage.setItem(savedRoom, JSON.stringify(saveMessages));
-    }
-    if (localStorage.getItem(String(savedUserName)) !== savedRoom) {
-      setError('Вы не являетесь участником чата');
+      //если цитирование
+      if (messageReply) {
+        const newMessage = {
+          id: Date.now(),
+          value: {
+            value: valueMessage,
+            replyValue: messageReply,
+          },
+          userName: savedUserName,
+        };
+        saveMessages.push(newMessage);
+        localStorage.setItem(savedRoom, JSON.stringify(saveMessages));
+        setMessageReply('');
+        setMessageReplyValue('');
+      } else {
+        //если просто сообщение
+        const newMessage = { id: Date.now() + 1, userName: savedUserName, value: valueMessage };
+        saveMessages.push(newMessage);
+        localStorage.setItem(savedRoom, JSON.stringify(saveMessages));
+      }
     }
     setValueMessage('');
     event.preventDefault();
@@ -88,7 +130,6 @@ export function useSessions() {
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValueMessage((event.target as HTMLInputElement).value);
   };
-  const [error, setError] = useState('');
   const [valueMessage, setValueMessage] = useState('');
 
   return {
@@ -100,11 +141,16 @@ export function useSessions() {
     handleEmojiClick,
     handleTooBigImage,
     showEmoji,
+    handleMessageClick,
+    handleMessageReply,
+    handleCloseMessageReply,
+    messageReplyValue,
+    messageReplyId,
+    showMessageReply,
     emojies,
     gotImage,
     tooBigImage,
     valueMessage,
     showed,
-    error,
   };
 }
