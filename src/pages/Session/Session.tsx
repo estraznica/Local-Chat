@@ -6,7 +6,20 @@ import { useParams } from 'react-router-dom';
 
 export default function Session() {
   const { id } = useParams();
-  const { changeHandler, handleSubmit, setValueMessage, valueMessage, error } = useSessions();
+  const {
+    changeHandler,
+    handleSubmit,
+    addImageHandler,
+    handleEmojiClick,
+    handleTooBigImage,
+    showEmoji,
+    showed,
+    emojies,
+    gotImage,
+    valueMessage,
+    tooBigImage,
+    error,
+  } = useSessions();
   //получаю пользователя и комнату
   const savedUserName = sessionStorage.key(0);
   const savedRoom = id?.slice(1);
@@ -35,32 +48,6 @@ export default function Session() {
     };
   }, []);
 
-  //добавление эмоджи в текст
-  const [showed, setShowed] = React.useState(false);
-  const showEmoji = function () {
-    setShowed((prev) => !prev);
-  };
-
-  let emojies = ['😀', '😆', '😅', '🤣', '🙂', '🙃', '🥰'];
-  const handleEmojiClick = function (i: number) {
-    setValueMessage(valueMessage + emojies[i]);
-  };
-  //поддержка медиа-контента
-  const [gotImage, setGotImage] = React.useState(false);
-  const addImageHandler = function () {
-    const input = document.getElementById('imageInput') as HTMLInputElement;
-    const file = input.files ? input.files[0] : null;
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function (event: any) {
-        const imageData = event.target.result;
-        localStorage.setItem('imageData', imageData);
-        setGotImage(true);
-        console.log('Картинка добавлена в localStorage.');
-      };
-      reader.readAsDataURL(file);
-    }
-  };
   return (
     <>
       <div className="wrapper-session">
@@ -78,7 +65,11 @@ export default function Session() {
                 {messages.map((message: IMessage) => (
                   <div className="user-id" key={message.id}>
                     {message.userName}
-                    <div className="message">{message.value}</div>
+                    {typeof message.value === 'string' ? (
+                      <div className="message">{message.value}</div>
+                    ) : (
+                      <img src={message.value.src} className="message"></img>
+                    )}
                   </div>
                 ))}
               </>
@@ -86,6 +77,14 @@ export default function Session() {
           </>
         </section>
         <section className="entry-field">
+          {tooBigImage && (
+            <div className="toobigimage">
+              <div className="toobigimage-close" onClick={() => handleTooBigImage()}>
+                х
+              </div>
+              <p>Объем изображения не должен превышать 300KB</p>
+            </div>
+          )}
           <input
             type="text"
             id="text"
@@ -117,7 +116,7 @@ export default function Session() {
                 stroke="#fff"
               />
             </svg>
-            <input type="file" id="imageInput" onClick={addImageHandler} />
+            <input type="file" accept="image/*" id="imageInput" onChange={addImageHandler} />
             {gotImage && <div className="got-image"></div>}
           </div>
           <button className="choose-emoji" onClick={showEmoji}>

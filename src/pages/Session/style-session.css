@@ -52,6 +52,31 @@ header {
   align-items: center;
   position: relative;
 }
+.toobigimage {
+  position: absolute;
+  bottom: 330px;
+  width: 200px;
+  height: 170px;
+  background: aliceblue;
+  border-radius: 5px;
+  text-align: center;
+}
+.toobigimage p {
+  padding: 0 10px 10px 10px;
+}
+.toobigimage-close {
+  margin: 5px;
+  text-align: center;
+  font-size: 26px;
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 5px;
+  background: #ed3203;
+}
+.toobigimage-close:hover {
+  cursor: pointer;
+}
 input {
   width: 500px;
   height: 50px;
@@ -126,6 +151,7 @@ input:focus {
 .emoji {
   padding: 10px;
   transition: 0.2s;
+  user-select: none;
 }
 .emoji:hover {
   transform: scale(1.15);
