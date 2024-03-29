@@ -45,6 +45,8 @@ header {
 .messagereplyvalue {
   background-color: #5babec;
   height: 55px;
+  height: auto;
+  word-wrap: break-word;
   width: 100%;
   color: aliceblue;
 }
@@ -57,6 +59,10 @@ header {
 }
 .messagereplyvalue-close:hover {
   cursor: pointer;
+}
+.messagereplyvalue p {
+  margin-left: 20px;
+  margin-bottom: 10px;
 }
 .replybutton {
   padding: 5px;
