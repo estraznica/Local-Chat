@@ -1,4 +1,4 @@
-import './style-form.css';
+import './form.css';
 import React from 'react';
 import { useForms } from '../../hooks/forms';
 

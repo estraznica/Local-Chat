@@ -1,4 +1,4 @@
-import './style-session.css';
+import './session.css';
 import React from 'react';
 import { useSessions } from '../../hooks/sessions';
 import { IMessage } from '../../hooks/sessions';
@@ -31,7 +31,7 @@ export default function Session() {
   //получаю сообщения
   const messagesJSON = localStorage.getItem(String(savedRoom));
   const messages = messagesJSON ? JSON.parse(messagesJSON) : [];
-  //чисто для перерисовки когда получаю сообщения
+  //для перерисовки когда получаю сообщения
   const [state, setState] = React.useState(true);
 
   React.useEffect(() => {
