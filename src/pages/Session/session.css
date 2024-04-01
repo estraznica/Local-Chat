@@ -138,6 +138,11 @@ input:focus {
   transition: 0.2s;
   position: relative;
 }
+.clip-image {
+  position: absolute;
+  left: 8px;
+  top: 10px;
+}
 .add-image:hover {
   transform: scale(0.95);
 }
