@@ -1,18 +1,16 @@
 import './form.css';
 import React from 'react';
-import { useForms } from '../../hooks/forms';
-
+import { useLogin } from '../../hooks/use-login';
 export default function Form() {
   const {
     valueLogin,
     valueRoom,
+    errorRoom,
+    errorLogin,
     changeHandlerLogin,
     changeHandlerRoom,
     handleSubmitForm,
-    errorRoom,
-    errorLogin,
-  } = useForms();
-
+  } = useLogin();
   return (
     <div className="wrapper-form">
       <form id="login-form" method="get" action={`/chat/:${valueRoom}`}>

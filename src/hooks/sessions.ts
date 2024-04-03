@@ -1,15 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { IMessage } from '../types';
 
-export interface IMessage {
-  id: number;
-  value: string | IMessageObj;
-  userName: string;
-}
-interface IMessageObj {
-  src?: string;
-  value: string;
-  replyValue: string;
-}
 export function useSessions() {
   //получаю пользователя и комнату из sessionStorage
   const savedUserName = String(sessionStorage.key(0));
@@ -17,16 +8,18 @@ export function useSessions() {
   //получаю сообщения из localStorage
   const messagesJSON = localStorage.getItem(String(savedRoom));
   //парсю их, если они есть
-  const saveMessages = messagesJSON ? JSON.parse(messagesJSON) : [];
+  const savedMessages = messagesJSON ? JSON.parse(messagesJSON) : [];
+  //храню сообщения в состоянии
+  const [messagesState, setMessagesState] = React.useState(savedMessages);
 
   //поддержка медиа-контента
   const [gotImage, setGotImage] = React.useState(false);
   const [image, setImage] = React.useState('');
   const [tooBigImage, setTooBigImage] = React.useState(false);
 
-  const addImageHandler = function () {
-    const input = document.getElementById('imageInput') as HTMLInputElement;
-    const file = input.files ? input.files[0] : null;
+  const addImageHandler = function (imageInputRef: React.RefObject<HTMLInputElement>) {
+    const input = imageInputRef.current;
+    const file = input?.files ? input.files[0] : null;
     if (file) {
       const maxSizeInBytes = 300 * 1024; // 300KB, ограничение для размера изображения, чтобы быстро не переполнить localStorage
       if (file.size <= maxSizeInBytes) {
@@ -46,15 +39,6 @@ export function useSessions() {
   //если загрузили слишком большое изображение
   const handleTooBigImage = () => {
     setTooBigImage((prev) => !prev);
-  };
-  //добавление эмоджи в текст
-  const [showed, setShowed] = React.useState(false);
-  const showEmoji = function () {
-    setShowed((prev) => !prev);
-  };
-  let emojies = ['😀', '😆', '😅', '🤣', '🙂', '🙃', '🥰'];
-  const handleEmojiClick = function (i: number) {
-    setValueMessage(valueMessage + emojies[i]);
   };
   //цитирование
   const [messageReply, setMessageReply] = React.useState('');
@@ -89,13 +73,14 @@ export function useSessions() {
   const handleSubmit = (event: React.FormEvent<HTMLButtonElement>) => {
     //если добавили изображение
     if (image) {
-      const newMessage = {
+      const newMessage: IMessage = {
         id: Date.now(),
-        userName: savedUserName,
         value: { src: image },
+        userName: savedUserName,
       };
-      saveMessages.push(newMessage);
-      localStorage.setItem(savedRoom, JSON.stringify(saveMessages));
+      savedMessages.push(newMessage);
+      localStorage.setItem(savedRoom, JSON.stringify(savedMessages));
+      setMessagesState(savedMessages);
       setGotImage(false);
       setImage('');
     }
@@ -104,7 +89,7 @@ export function useSessions() {
     } else {
       //если цитирование
       if (messageReply) {
-        const newMessage = {
+        const newMessage: IMessage = {
           id: Date.now(),
           value: {
             value: valueMessage,
@@ -112,15 +97,21 @@ export function useSessions() {
           },
           userName: savedUserName,
         };
-        saveMessages.push(newMessage);
-        localStorage.setItem(savedRoom, JSON.stringify(saveMessages));
+        savedMessages.push(newMessage);
+        localStorage.setItem(savedRoom, JSON.stringify(savedMessages));
+        setMessagesState(savedMessages);
         setMessageReply('');
         setMessageReplyValue('');
       } else {
         //если просто сообщение
-        const newMessage = { id: Date.now() + 1, userName: savedUserName, value: valueMessage };
-        saveMessages.push(newMessage);
-        localStorage.setItem(savedRoom, JSON.stringify(saveMessages));
+        const newMessage: IMessage = {
+          id: Date.now() + 1,
+          userName: savedUserName,
+          value: valueMessage,
+        };
+        savedMessages.push(newMessage);
+        localStorage.setItem(savedRoom, JSON.stringify(savedMessages));
+        setMessagesState(savedMessages);
       }
     }
     setValueMessage('');
@@ -130,7 +121,7 @@ export function useSessions() {
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValueMessage((event.target as HTMLInputElement).value);
   };
-  const [valueMessage, setValueMessage] = useState('');
+  const [valueMessage, setValueMessage] = React.useState('');
 
   return {
     changeHandler,
@@ -138,19 +129,17 @@ export function useSessions() {
     setValueMessage,
     addImageHandler,
     setTooBigImage,
-    handleEmojiClick,
     handleTooBigImage,
-    showEmoji,
     handleMessageClick,
     handleMessageReply,
     handleCloseMessageReply,
+    setMessagesState,
+    messagesState,
     messageReplyValue,
     messageReplyId,
     showMessageReply,
-    emojies,
     gotImage,
     tooBigImage,
     valueMessage,
-    showed,
   };
 }

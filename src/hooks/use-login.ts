@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-
-export function useForms() {
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+export function useLogin() {
+  const navigate = useNavigate();
   const handleSubmitForm = (event: React.FormEvent<HTMLButtonElement>) => {
     //проверки на ввод
     if (valueLogin.trim().length === 0) {
@@ -31,31 +32,31 @@ export function useForms() {
       sessionStorage.clear();
       sessionStorage.setItem(valueLogin, valueRoom);
 
-      window.open(`/chat/:${valueRoom}`, '_blank');
+      navigate(`/chat/:${valueRoom}`);
       event.preventDefault();
     }
   };
 
-  const [errorLogin, setErrorLogin] = useState('');
-  const [errorRoom, setErrorRoom] = useState('');
+  const [errorLogin, setErrorLogin] = React.useState('');
+  const [errorRoom, setErrorRoom] = React.useState('');
 
   const changeHandlerLogin = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValueLogin((event.target as HTMLInputElement).value);
   };
-  const [valueLogin, setValueLogin] = useState('');
+  const [valueLogin, setValueLogin] = React.useState('');
 
   const changeHandlerRoom = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValueRoom((event.target as HTMLInputElement).value);
   };
-  const [valueRoom, setValueRoom] = useState('');
+  const [valueRoom, setValueRoom] = React.useState('');
 
   return {
     valueLogin,
     valueRoom,
+    errorLogin,
+    errorRoom,
     changeHandlerLogin,
     changeHandlerRoom,
     handleSubmitForm,
-    errorLogin,
-    errorRoom,
   };
 }

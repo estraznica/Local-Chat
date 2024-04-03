@@ -1,7 +1,8 @@
 import './session.css';
 import React from 'react';
 import { useSessions } from '../../hooks/sessions';
-import { IMessage } from '../../hooks/sessions';
+import { useEmoji } from '../../hooks/use-emoji';
+import { IMessage } from '../../types';
 import { useParams } from 'react-router-dom';
 
 export default function Session() {
@@ -10,41 +11,47 @@ export default function Session() {
     changeHandler,
     handleSubmit,
     addImageHandler,
-    handleEmojiClick,
     handleTooBigImage,
-    showEmoji,
     handleMessageClick,
     handleMessageReply,
     handleCloseMessageReply,
+    setValueMessage,
+    setMessagesState,
+    messagesState,
     messageReplyValue,
     showMessageReply,
     messageReplyId,
-    showed,
-    emojies,
     gotImage,
     valueMessage,
     tooBigImage,
   } = useSessions();
+  {
+  }
+  const { handleEmojiClick, showEmoji, showed, emojies } = useEmoji({
+    valueMessage,
+    setValueMessage,
+  });
   //получаю пользователя и комнату
   const savedUserName = sessionStorage.key(0);
   const savedRoom = id?.slice(1);
   //получаю сообщения
-  const messagesJSON = localStorage.getItem(String(savedRoom));
-  const messages = messagesJSON ? JSON.parse(messagesJSON) : [];
-  //для перерисовки когда получаю сообщения
-  const [state, setState] = React.useState(true);
+  const messages = messagesState;
+
+  const messagesRef = React.useRef<HTMLDivElement>(null);
+  const imageInputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
     //прокручиваю в конец
-    let messageArea = document.getElementById('messages');
+    let messageArea = messagesRef.current;
     messageArea?.scrollTo({
       top: messageArea?.scrollHeight,
     });
 
     const storageEventListener = (event: StorageEvent) => {
       if (event.key === savedRoom) {
-        //обновляю состояние чтобы вызвать перерисовку компонента
-        setState((prev) => !prev);
+        const updatedMessagesJSON = localStorage.getItem(String(savedRoom));
+        const updatedMessages = updatedMessagesJSON ? JSON.parse(updatedMessagesJSON) : [];
+        setMessagesState(updatedMessages);
       }
     };
     window.addEventListener('storage', storageEventListener);
@@ -61,7 +68,7 @@ export default function Session() {
           <span className="room-number">Комната #{savedRoom}</span>
           <span className="room-number"> {savedUserName} </span>
         </header>
-        <section id="messages" className="messages">
+        <section id="messages" ref={messagesRef} className="messages">
           <>
             {messages.length === 0 ? (
               <div className="no-messages">Здесь пока ничего нет...</div>
@@ -134,7 +141,13 @@ export default function Session() {
             )}
             <div className="add-image">
               <img src="../img/clip.svg" alt="add image" className="clip-image" />
-              <input type="file" accept="image/*" id="imageInput" onChange={addImageHandler} />
+              <input
+                type="file"
+                accept="image/*"
+                id="imageInput"
+                ref={imageInputRef}
+                onChange={() => addImageHandler(imageInputRef)}
+              />
               {gotImage && <div className="got-image"></div>}
             </div>
             <button className="choose-emoji" onClick={showEmoji}>
