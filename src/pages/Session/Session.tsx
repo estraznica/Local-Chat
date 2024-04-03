@@ -1,36 +1,35 @@
 import './session.css';
 import React from 'react';
-import { useSessions } from '../../hooks/sessions';
+import { useMessages } from '../../hooks/use-messages';
 import { useEmoji } from '../../hooks/use-emoji';
 import { IMessage } from '../../types';
 import { useParams } from 'react-router-dom';
-
+import { useAddImage } from '../../hooks/use-add-image';
 export default function Session() {
   const { id } = useParams();
   const {
-    changeHandler,
+    changeMessageHandler,
     handleSubmit,
-    addImageHandler,
-    handleTooBigImage,
     handleMessageClick,
     handleMessageReply,
     handleCloseMessageReply,
     setValueMessage,
     setMessagesState,
+    setImage,
     messagesState,
     messageReplyValue,
     showMessageReply,
     messageReplyId,
-    gotImage,
+    image,
     valueMessage,
-    tooBigImage,
-  } = useSessions();
+  } = useMessages();
   {
   }
   const { handleEmojiClick, showEmoji, showed, emojies } = useEmoji({
     valueMessage,
     setValueMessage,
   });
+  const { tooBigImage, addImageHandler, handleTooBigImage } = useAddImage(setImage);
   //получаю пользователя и комнату
   const savedUserName = sessionStorage.key(0);
   const savedRoom = id?.slice(1);
@@ -38,7 +37,6 @@ export default function Session() {
   const messages = messagesState;
 
   const messagesRef = React.useRef<HTMLDivElement>(null);
-  const imageInputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
     //прокручиваю в конец
@@ -46,7 +44,7 @@ export default function Session() {
     messageArea?.scrollTo({
       top: messageArea?.scrollHeight,
     });
-
+    //изменение сообщений при срабатывании события localStorage
     const storageEventListener = (event: StorageEvent) => {
       if (event.key === savedRoom) {
         const updatedMessagesJSON = localStorage.getItem(String(savedRoom));
@@ -64,7 +62,6 @@ export default function Session() {
     <>
       <div className="wrapper-session">
         <header>
-          {' '}
           <span className="room-number">Комната #{savedRoom}</span>
           <span className="room-number"> {savedUserName} </span>
         </header>
@@ -127,7 +124,7 @@ export default function Session() {
               name="text"
               className="text"
               value={valueMessage}
-              onChange={changeHandler}
+              onChange={changeMessageHandler}
               placeholder="Написать сообщение..."
             />
             {showed && (
@@ -139,16 +136,9 @@ export default function Session() {
                 ))}
               </div>
             )}
-            <div className="add-image">
+            <div className="add-image" onClick={() => addImageHandler()}>
               <img src="../img/clip.svg" alt="add image" className="clip-image" />
-              <input
-                type="file"
-                accept="image/*"
-                id="imageInput"
-                ref={imageInputRef}
-                onChange={() => addImageHandler(imageInputRef)}
-              />
-              {gotImage && <div className="got-image"></div>}
+              {image && <div className="got-image"></div>}
             </div>
             <button className="choose-emoji" onClick={showEmoji}>
               🙂

@@ -145,6 +145,7 @@ input:focus {
 }
 .add-image:hover {
   transform: scale(0.95);
+  cursor: pointer;
 }
 .got-image {
   position: absolute;
