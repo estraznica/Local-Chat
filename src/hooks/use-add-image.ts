@@ -26,9 +26,7 @@ export function useAddImage(setImage: React.Dispatch<React.SetStateAction<string
       }
     };
     input.click();
-    return () => {
-      input.remove();
-    };
+    input.remove();
   };
 
   const handleTooBigImage = () => {
