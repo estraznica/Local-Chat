@@ -23,8 +23,7 @@ export default function Session() {
     image,
     valueMessage,
   } = useMessages();
-  {
-  }
+
   const { handleEmojiClick, showEmoji, showed, emojies } = useEmoji({
     valueMessage,
     setValueMessage,
