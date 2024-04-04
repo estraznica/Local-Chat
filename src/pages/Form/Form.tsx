@@ -4,11 +4,10 @@ import { useNavigate } from 'react-router-dom';
 
 export default function Form() {
   const navigate = useNavigate();
-
   const handleSubmitForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const errorLogin = valueLogin.trim().length === 0;
-    const errorRoom = valueRoom.trim().length === 0;
+    setFormSubmitted(true);
+
     if (errorLogin || errorRoom) {
       return;
     }
@@ -31,8 +30,12 @@ export default function Form() {
   const changeHandlerRoom = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValueRoom((event.target as HTMLInputElement).value);
   };
-
   const [valueRoom, setValueRoom] = React.useState('');
+
+  const [formSubmitted, setFormSubmitted] = React.useState(false);
+
+  const errorLogin = valueLogin.trim().length === 0;
+  const errorRoom = valueRoom.trim().length === 0;
 
   return (
     <div className="wrapper-form">
@@ -49,6 +52,7 @@ export default function Form() {
           onChange={changeHandlerLogin}
           placeholder="Введите логин"
         />
+        {formSubmitted && errorLogin && <p className="error-form">Пожалуйста, введите логин</p>}
         <label htmlFor="room">
           <span>Номер комнаты</span>
         </label>
@@ -61,6 +65,9 @@ export default function Form() {
           onChange={changeHandlerRoom}
           placeholder="Введите номер комнаты"
         />
+        {formSubmitted && errorRoom && (
+          <p className="error-form">Пожалуйста, введите номер комнаты</p>
+        )}
         <button type="submit" className="form-button">
           НАЧАТЬ ЧАТ
         </button>
