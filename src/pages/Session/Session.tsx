@@ -1,10 +1,10 @@
 import './session.css';
 import React from 'react';
 import { useMessages } from '../../hooks/use-messages';
-import { useEmoji } from '../../hooks/use-emoji';
 import { IMessage } from '../../types';
 import { useParams } from 'react-router-dom';
 import { useAddImage } from '../../hooks/use-add-image';
+import EmojiChatSelect from '../../components/EmojiChatSelect/EmojiChatSelect';
 export default function Session() {
   const { id } = useParams();
   const {
@@ -24,10 +24,6 @@ export default function Session() {
     valueMessage,
   } = useMessages();
 
-  const { handleEmojiClick, showEmoji, showed, emojies } = useEmoji({
-    valueMessage,
-    setValueMessage,
-  });
   const { tooBigImage, addImageHandler, handleTooBigImage } = useAddImage(setImage);
   //получаю пользователя и комнату
   const savedUserName = sessionStorage.key(0);
@@ -36,6 +32,10 @@ export default function Session() {
   const messages = messagesState;
 
   const messagesRef = React.useRef<HTMLDivElement>(null);
+
+  const handleEmojiSelect = (emoji: string) => {
+    setValueMessage(valueMessage + emoji);
+  };
 
   React.useEffect(() => {
     //прокручиваю в конец
@@ -126,22 +126,11 @@ export default function Session() {
               onChange={changeMessageHandler}
               placeholder="Написать сообщение..."
             />
-            {showed && (
-              <div className="emojies">
-                {emojies.map((emoji, i) => (
-                  <div className="emoji" key={i} onClick={() => handleEmojiClick(i)}>
-                    {emojies[i]}
-                  </div>
-                ))}
-              </div>
-            )}
             <div className="add-image" onClick={() => addImageHandler()}>
               <img src="../img/clip.svg" alt="add image" className="clip-image" />
               {image && <div className="got-image"></div>}
             </div>
-            <button className="choose-emoji" onClick={showEmoji}>
-              🙂
-            </button>
+            <EmojiChatSelect onSelectEmoji={handleEmojiSelect} />
             <button className="send" onClick={handleSubmit}>
               <div className="send-triangle"></div>
             </button>
