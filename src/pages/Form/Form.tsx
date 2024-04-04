@@ -1,19 +1,42 @@
 import './form.css';
 import React from 'react';
-import { useLogin } from '../../hooks/use-login';
+import { useNavigate } from 'react-router-dom';
+
 export default function Form() {
-  const {
-    valueLogin,
-    valueRoom,
-    errorRoom,
-    errorLogin,
-    changeHandlerLogin,
-    changeHandlerRoom,
-    handleSubmitForm,
-  } = useLogin();
+  const navigate = useNavigate();
+
+  const handleSubmitForm = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const errorLogin = valueLogin.trim().length === 0;
+    const errorRoom = valueRoom.trim().length === 0;
+    if (errorLogin || errorRoom) {
+      return;
+    }
+    // Сохраняю комнату в localStorage, если ее там нет
+    if (!localStorage.getItem(valueRoom)) {
+      localStorage.setItem(valueRoom, '');
+    }
+    // Сохраняю в sessionStorage логин и комнату для получения логина и комнаты в чате
+    sessionStorage.clear();
+    sessionStorage.setItem(valueLogin, valueRoom);
+
+    navigate(`/chat/:${valueRoom}`);
+  };
+
+  const changeHandlerLogin = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValueLogin((event.target as HTMLInputElement).value);
+  };
+  const [valueLogin, setValueLogin] = React.useState('');
+
+  const changeHandlerRoom = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValueRoom((event.target as HTMLInputElement).value);
+  };
+
+  const [valueRoom, setValueRoom] = React.useState('');
+
   return (
     <div className="wrapper-form">
-      <form id="login-form" method="get" action={`/chat/:${valueRoom}`}>
+      <form id="login-form" method="get" onSubmit={handleSubmitForm}>
         <label htmlFor="login">
           <span>Логин</span>
         </label>
@@ -26,7 +49,6 @@ export default function Form() {
           onChange={changeHandlerLogin}
           placeholder="Введите логин"
         />
-        {errorLogin && <p className="error-form">Пожалуйста, введите логин</p>}
         <label htmlFor="room">
           <span>Номер комнаты</span>
         </label>
@@ -39,8 +61,7 @@ export default function Form() {
           onChange={changeHandlerRoom}
           placeholder="Введите номер комнаты"
         />
-        {errorRoom && <p className="error-form">Пожалуйста, введите номер комнаты</p>}
-        <button type="submit" className="form-button" onClick={handleSubmitForm}>
+        <button type="submit" className="form-button">
           НАЧАТЬ ЧАТ
         </button>
       </form>
