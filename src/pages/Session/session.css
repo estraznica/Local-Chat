@@ -179,38 +179,6 @@ input:focus {
   width: 60px;
   height: 50px;
 }
-.emojies {
-  position: absolute;
-  right: 20px;
-  bottom: 115px;
-  width: 400px;
-  height: 60px;
-  background-color: aliceblue;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  border-radius: 10px;
-  font-size: 26px;
-}
-.emoji {
-  padding: 10px;
-  transition: 0.2s;
-  user-select: none;
-}
-.emoji:hover {
-  transform: scale(1.15);
-  cursor: pointer;
-}
-
-.choose-emoji {
-  background-color: #3499ec;
-  border-radius: 45px;
-  width: 45px;
-  height: 45px;
-  transition: 0.2s;
-  font-size: 30px;
-}
 button:hover {
   transform: scale(0.95);
 }
