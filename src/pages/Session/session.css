@@ -29,6 +29,9 @@ header {
   background-color: #d8eeff;
   height: 100%;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 .messages::-webkit-scrollbar {
   width: 12px;
@@ -190,7 +193,13 @@ svg#send {
 
 .user-id {
   padding-top: 5px;
-  margin-left: 20px;
+  margin-left: 15px;
+}
+.me {
+  align-self: flex-end;
+  text-align: right;
+  margin-right: 15px;
+  margin-left: 0px;
 }
 .message {
   display: flex;

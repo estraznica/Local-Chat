@@ -72,10 +72,10 @@ export default function Session() {
               <>
                 {messages.map((message: IMessage) => (
                   <div
-                    className="user-id"
+                    className={message.userName === savedUserName ? 'user-id me' : 'user-id'}
                     key={message.id}
                     onClick={() => handleMessageClick(message.id)}>
-                    {message.userName}
+                    {message.userName !== savedUserName && message.userName}
                     {typeof message.value === 'string' ? (
                       <div className="message">{message.value}</div>
                     ) : 'src' in message.value ? (
