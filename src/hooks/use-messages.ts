@@ -28,8 +28,8 @@ export function useMessages() {
     let message = JSON.parse(value);
     //простая цитата
     if (typeof message == 'string') {
-      setMessageReply(value);
-      setMessageReplyValue(value.slice(0, 100));
+      setMessageReply(message);
+      setMessageReplyValue(message.slice(0, 100));
     } else if ('src' in message) {
       //цитирование изображения
       setMessageReply('Изображение');
