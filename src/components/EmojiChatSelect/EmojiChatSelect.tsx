@@ -1,5 +1,7 @@
 import './emoji-chat-select.css';
 import React from 'react';
+import IconButton from '../../components/IconButton/IconButton';
+import { IconChooseEmoji } from '../../components/IconComponents/IconComponents';
 interface EmojiProps {
   onSelectEmoji: (emoji: string) => void;
 }
@@ -24,9 +26,7 @@ export default function EmojiChatSelect({ onSelectEmoji }: EmojiProps) {
           ))}
         </div>
       )}
-      <button className="choose-emoji" onClick={showEmoji}>
-        🙂
-      </button>
+      <IconButton icon={<IconChooseEmoji />} onClick={showEmoji}></IconButton>
     </>
   );
 }

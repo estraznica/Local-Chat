@@ -1,0 +1,11 @@
+.clip-image,
+.emoji-image,
+.send-image {
+  width: 100%;
+  height: 100%;
+}
+
+.send-image {
+  clip-path: polygon(10% 45%, 0 0, 100% 50%, 0 100%, 10% 55%, 50% 50%);
+  background-color: white;
+}

@@ -5,6 +5,8 @@ import { IMessage } from '../../types';
 import { useParams } from 'react-router-dom';
 import { useAddImage } from '../../hooks/use-add-image';
 import EmojiChatSelect from '../../components/EmojiChatSelect/EmojiChatSelect';
+import IconButton from '../../components/IconButton/IconButton';
+import { IconSend, IconAddImage } from '../../components/IconComponents/IconComponents';
 export default function Session() {
   const { id } = useParams();
   const {
@@ -70,12 +72,14 @@ export default function Session() {
               <div className="no-messages">Здесь пока ничего нет...</div>
             ) : (
               <>
-                {messages.map((message: IMessage) => (
+                {messages.map((message: IMessage, index: number) => (
                   <div
                     className={message.userName === savedUserName ? 'user-id me' : 'user-id'}
                     key={message.id}
                     onClick={() => handleMessageClick(message.id)}>
-                    {message.userName !== savedUserName && message.userName}
+                    {index === 0 || messages[index - 1].userName !== message.userName
+                      ? message.userName !== savedUserName && message.userName
+                      : null}
                     {typeof message.value === 'string' ? (
                       <div className="message">{message.value}</div>
                     ) : 'src' in message.value ? (
@@ -117,6 +121,10 @@ export default function Session() {
                 <p>Объем изображения не должен превышать 300KB</p>
               </div>
             )}
+            <div className="add-image">
+              <IconButton icon={<IconAddImage />} onClick={() => addImageHandler()}></IconButton>
+              {image && <div className="got-image"></div>}
+            </div>
             <input
               type="text"
               id="text"
@@ -126,14 +134,8 @@ export default function Session() {
               onChange={changeMessageHandler}
               placeholder="Написать сообщение..."
             />
-            <div className="add-image" onClick={() => addImageHandler()}>
-              <img src="../img/clip.svg" alt="add image" className="clip-image" />
-              {image && <div className="got-image"></div>}
-            </div>
             <EmojiChatSelect onSelectEmoji={handleEmojiSelect} />
-            <button className="send" onClick={handleSubmit}>
-              <div className="send-triangle"></div>
-            </button>
+            <IconButton icon={<IconSend />} onClick={handleSubmit}></IconButton>
           </div>
         </section>
       </div>
