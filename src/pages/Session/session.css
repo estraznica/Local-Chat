@@ -148,8 +148,8 @@ input:focus {
   position: absolute;
   top: -5px;
   right: 0px;
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
   border-radius: 10px;
   background-color: red;
 }
@@ -163,28 +163,6 @@ input:focus {
   left: 10px;
   top: 10px;
 }
-.send {
-  background-color: #3499ec;
-  width: 60px;
-  border-radius: 60px;
-  height: 60px;
-  transition: 0.2s;
-}
-.send-triangle {
-  clip-path: polygon(17% 50%, 17% 13%, 89% 51%, 16% 91%, 17% 57%, 61% 53%);
-  background-color: aliceblue;
-  width: 60px;
-  height: 50px;
-}
-button:hover {
-  transform: scale(0.95);
-}
-svg#send {
-  position: absolute;
-  right: 10px;
-  top: 15px;
-}
-
 .user-id {
   margin-left: 15px;
 }
